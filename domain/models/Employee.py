@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 
 from domain.models.User import User
 
@@ -8,7 +9,6 @@ class Employee(User):
         super().__init__(id, name , last_name,phone, email, password, status)
         self._rol = rol
 
-
     @property
     def rol(self):
         return self._rol
@@ -16,7 +16,6 @@ class Employee(User):
     @rol.setter
     def rol(self, rol):
         self._rol = rol
-
 
 
     def __str__(self):
