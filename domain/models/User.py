@@ -21,14 +21,33 @@ class User:
 
     @id.setter
     def id(self, id):
-        self._id = id
+        while True:
+            try:
+                if not  str(id).isdigit() or int(id) <=0:
+                    raise ValueError("ERROR: El ID debe ser un numero entero")
+                self._id = int(id)
+                break
+            except ValueError as e:
+                print(e)
+                id = input("Ingrese un ID válido: ")
 
     @property
     def name(self):
         return self._name
+
+
     @name.setter
     def name(self, name):
-        self._name = name
+        while True:
+            try:
+                name = name.strip()
+                if not name.isalpha():
+                    raise ValueError("❌ Error: El nombre solo debe contener letras.")
+                self._name = name
+                break
+            except ValueError as e:
+                print(e)
+                name = input("🔄 Ingrese un nombre válido (solo letras): ")
 
     @property
     def last_name(self):
@@ -36,7 +55,17 @@ class User:
 
     @last_name.setter
     def last_name(self, last_name):
-        self._last_name = last_name
+        while True:
+            try:
+                last_name = last_name.strip()
+                if not last_name.isalpha():
+                    raise ValueError("❌ Error: El apellido solo debe contener letras.")
+                self._last_name = last_name
+                break
+            except ValueError as e:
+                print(e)
+                last_name = input("Ingrese un apellido válido (solo letras): ")
+
 
     @property
     def phone(self):
@@ -85,7 +114,7 @@ class User:
                 break
             except InvalidPasswordError as e:
                 print(f"Error {e}")
-                password = input("Ingrese una contraseña valida")
+                password = input("Ingrese una contraseña valida: ")
 
 
     @property

@@ -11,25 +11,24 @@ from application.EmployeeInput import EmployeeInput
 from application.RoomInput import RoomInput
 from application.RoomService import RoomService
 from domain.models.Room import Room
-from repository.conexion.Conexion import Conexion
-
 
 
 class Menu_App:
 
-    db = Conexion(host='localhost', port=3306, user='root', password="", database='hotel_saturday')
-    db.connection()
 
-    def __init__(self):
+
+    def __init__(self, db):
+        self.db = db
         self.guest = Guest(None, None,None,None,None,None,None,None,None)
-        self.guest_service = GuestService()
+        self.guest_service = GuestService(self.db)
         self.guest_input = GuestInput()
         self.employee = Employee(None, None, None, None, None, None, None, None)
-        self.employee_service = EmployeeService()
+        self.employee_service = EmployeeService(self.db)
         self.employee_input = EmployeeInput()
         self.room = Room (None, None, None, None, None)
-        self.room_service = RoomService()
+        self.room_service = RoomService(self.db)
         self.room_input = RoomInput()
+
 
 
     def init_app(self):
@@ -37,24 +36,25 @@ class Menu_App:
 
         while init != 0:
 
-            option = int(input("1. Login \n2. Registro \n3. Salir \nSeleciona una opción: "))
+            option = int(input("1. Login \n2. Registro \n3. Salir \nSelecciona una opción: ").strip())
 
             if option == 1:
-                print("Login")
+                login = int(input("1. Empleado\n2. Huésped\nSeleccione una opción: ").strip())
+                if login == 1:
+                    self.employee_service.login(self.db)
+                elif login == 2:
+                    self.guest_service.login(self.db)
+                else:
+                    print("ERROR: Elija una opción correcta: ")
             elif option == 2:
                 print("Registro")
                 registro = int(input("1. Empleado\n2. Huésped "))
                 if registro == 1:
                     self.employee_input.register(self.employee, self.db)
                 elif registro == 2:
-
-                    self.room_input.registerRoom(self.room,self.db)
                     self.guest_input.register(self.guest,self.db)
             elif option ==  3:
                 print("Saliendo...")
                 break
 
-
-
-Menu_App()
 

@@ -1,11 +1,20 @@
 
 from domain.models.Employee import Employee
+from application.RoomService import RoomService
+from application.GuestService import GuestService
+from application.RoomInput import RoomInput
+from domain.models.Room import Room
 
 class EmployeeService:
 
     register_data = []
 
-    def __init__(self):
+    def __init__(self, db):
+        self.room_input = RoomInput()
+        self.db = db
+        self.guest_service = GuestService(self.db)
+        self.room_service = RoomService(self.db)
+        self.room = Room (None, None, None, None, None)
         self.employee = Employee (None, None, None, None, None, None, None, None)
 
     def createEmployee(self, employee):
@@ -21,3 +30,60 @@ class EmployeeService:
     def print_data_service(self):
         for data in self.register_data:
             print(data)
+
+
+    def login(self, db):
+        print("=== Inicio de Sesión ===")
+
+        email = input("Ingrese su correo: ").strip()
+        password = input("Ingrese su contraseña: ").strip()
+
+        query = "SELECT id, name, password, rol FROM employee WHERE email = %s"
+        params = (email,)
+
+        result = db.execute_query(query, params)
+
+        if not result:
+            print("❌ Error: Usuario no encontrado.")
+            return False
+
+        user_id, user_name, stored_password, user_rol = result[0]
+        if password == stored_password:
+            print(f"✅ Bienvenido {user_rol}, {user_name}! Inicio de sesión exitoso.")
+            while True:
+                match user_rol:
+                    case "Conserje":
+                        print("1. Ver habitaciones\n2. Limpiar habitación\n3. Salir")
+                        option = int(input("Selecciona una opción: "))
+                        match option:
+                            case 1:
+                                self.room_service.print_data_service()
+                            case 2:
+                                print("Seleccione una habitación para limpiar")
+                                print("Limpiando...")
+                            case 3:
+                                print("Saliendo del menú...")
+                                break
+
+                    case "Recepcionista":
+                        print(
+                            "1. Ver huéspedes\n2. Ver habitaciones\n3. Registrar habitación\n4. Editar huésped\n5. Salir")
+                        option = int(input("Selecciona una opción: "))
+                        match option:
+                            case 1:
+                                self.guest_service.print_data_service(self.db)
+                            case 2:
+                                self.room_service.print_data_service()
+                            case 3:
+                                self.room_input.registerRoom(self.room, self.db)
+                            case 4:
+                                self.guest_service.edit_guest(self.db)
+                            case 5:
+                                print("Saliendo del menú...")
+                                break  # ✅ El usuario puede salir cuando lo desee
+
+
+            return True
+        else:
+            print("❌ Error: Contraseña incorrecta.")
+            return False
