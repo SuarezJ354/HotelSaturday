@@ -25,9 +25,26 @@ class EmployeeInput:
         print("1. Activo \n2. Inactivo")
         status = input("Seleccione el estado: ")
         self.employee.status = status
-        print("1. Recepcionista\n2. Conserje\n3. Encargado de servicio al cliente\n4. Chef\n5. Cocinero\n6. Mesero\n7. Bartender\n8. Supervisor de limpieza\n9. Ama de llaves\n10. Técnico de mantenimiento\n11. Gerente general\n12. Gerente de operaciones\n13. Encargado de recursos humanos\n14. Contador\n15. Guardia de seguridad\n16. Supervisor de seguridad")
+        print("1. Recepcionista\n2. Conserje\n3. Servicio al cliente\n4. Otro")
         rol = input("Selecione su rol:")
-        self.employee.rol = rol
+        if rol == 1:
+            role = "Recepcionista"
+        elif rol == 2:
+            role = "Conserje"
+        elif rol == 3:
+            role = "Servicio al cliente"
+        elif rol == 4:
+            print("Muy pronto tendremos otros puestos")
+            puestosDisponibles =[
+                "Chef", "Cocinero",
+                "Mesero", "Bartender", "Supervisor de limpieza", "Ama de llaves",
+                "Técnico de mantenimiento", "Gerente general", "Gerente de operaciones",
+                "Recursos humanos", "Contador", "Guardia de seguridad", "Supervisor de seguridad"
+            ]
+        else:
+            print("Por favor ingrese un valor valido")
+            return
+        self.employee.rol = role
         self.employee_repository.create_employee_repository(self.employee, db)
 
     def print_data(self):

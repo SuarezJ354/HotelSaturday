@@ -1,4 +1,6 @@
+import re
 
+from domain.exceptions.CustomExceptions import InvalidEmailError, InvalidPhoneError, InvalidPasswordError
 
 
 class User:
@@ -42,7 +44,16 @@ class User:
 
     @phone.setter
     def phone(self, phone):
-        self._phone = phone
+        while True:
+            try:
+                if not phone.isdigit() or len(phone) < 7:
+                    raise InvalidPhoneError(phone)
+                self._phone = phone
+                break
+            except InvalidPhoneError as e:
+                print(f"Error al asignar el teléfono: {e}")
+                phone = input("Ingrese un telefono valido: ")
+
 
     @property
     def email(self):
@@ -50,7 +61,15 @@ class User:
 
     @email.setter
     def email(self, email):
-        self._email = email
+        while True:
+            try:
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                    raise InvalidEmailError(email)
+                self._email = email
+                break
+            except InvalidEmailError as e:
+                print(f"Error: {e}")
+                email = input(" Ingrese un correo válido: ")
 
     @property
     def password(self):
@@ -58,7 +77,16 @@ class User:
 
     @password.setter
     def password(self, password):
-        self._password = password
+        while True:
+            try:
+                if len(password) < 8:
+                    raise InvalidPasswordError(password)
+                self._password = password
+                break
+            except InvalidPasswordError as e:
+                print(f"Error {e}")
+                password = input("Ingrese una contraseña valida")
+
 
     @property
     def status(self):
