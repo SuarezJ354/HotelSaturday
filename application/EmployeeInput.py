@@ -1,8 +1,9 @@
-
+import mysql.connector
 
 from application.EmployeeService import EmployeeService
 from domain.models.Employee import Employee
 from repository.persistence.EmployeeRepository import EmployeeRepository
+from domain.exceptions.CustomExceptions import ExceptionsGenerals
 
 class EmployeeInput:
     def __init__(self):
@@ -10,8 +11,16 @@ class EmployeeInput:
         self.employee_repository = EmployeeRepository()
 
     def register(self, employee, db):
-        id = input("Ingrese su documento de identidad: ").strip()
-        self.employee.id = id
+        while True:
+            try:
+                id = input("Ingrese su documento de identidad: ").strip()
+                if not id.isdigit() or int(id) <= 0 or len(id) > 10:
+                    raise ValueError("❌ ERROR: El ID debe ser un número positivo y máximo 10 dígitos.")
+                self.employee.id = id
+                break
+            except ValueError as e:
+                print(e)
+
         name = input("Ingrese su nombre: ").strip()
         self.employee.name = name
         last_name = input("Ingrese su apellido: ").strip()
@@ -22,14 +31,22 @@ class EmployeeInput:
         self.employee.email = email
         password = input("Ingrese su contraseña: ").strip()
         self.employee.password = password
-        print("1. Activo \n2. Inactivo")
-        status = input("Seleccione el estado: ").strip()
+        while True:
+            try:
+                print("1. Activo \n2. Inactivo")
+                status = int(input("Seleccione el estado: ").strip())
+                if status not in [1, 2]:
+                    print("❌ ERROR: Ingrese una de las opciones mostradas.")
+                    continue
+                break
+
+            except ValueError:
+                print("❌ ERROR: Ingrese un número válido.")
         self.employee.status = status
         print("1. Recepcionista\n2. Conserje\n3. Servicio al cliente\n4. Otro")
         while True:
             try:
                 rol = int(input("Seleccione su rol: "))
-
                 if rol == 1:
                     role = "Recepcionista"
                 elif rol == 2:
@@ -52,7 +69,11 @@ class EmployeeInput:
                 print("❌ Entrada inválida. Debe ingresar un número.")
 
         self.employee.rol = role
-        self.employee_repository.create_employee_repository(self.employee, db)
-
-    def print_data(self):
-        self.employee_service.print_data_service()
+        try:
+            self.employee_repository.create_employee_repository(self.employee, db)
+            print("✅ Empleado registrado exitosamente.")
+        except mysql.connector.IntegrityError as e:
+            if e.errno == 1062:
+                print(f"❌ ERROR: Ya existe un usuario registrado con ese ID o Correo. No se puede registrar nuevamente.")
+            else:
+                print(f"❌ ERROR inesperado: {e}")

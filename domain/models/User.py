@@ -1,6 +1,7 @@
 import re
 
-from domain.exceptions.CustomExceptions import InvalidEmailError, InvalidPhoneError, InvalidPasswordError
+from domain.exceptions.CustomExceptions import InvalidEmailError, InvalidPhoneError, InvalidPasswordError, ExceptionsGenerals
+from repository.conexion.Conexion import Conexion
 
 
 class User:
@@ -15,21 +16,15 @@ class User:
         self._status = status
 
 
+
     @property
     def id(self):
         return self._id
 
     @id.setter
     def id(self, id):
-        while True:
-            try:
-                if not  str(id).isdigit() or int(id) <=0:
-                    raise ValueError("ERROR: El ID debe ser un numero entero")
-                self._id = int(id)
-                break
-            except ValueError as e:
-                print(e)
-                id = input("Ingrese un ID válido: ")
+        self._id = id
+
 
     @property
     def name(self):

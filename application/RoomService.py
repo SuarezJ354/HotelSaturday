@@ -28,3 +28,4 @@ class RoomService:
             id, number, type_ = habitacion
             print(f"ID: {id} | Número: {number} | Tipo: {type_}")
         return result
+
