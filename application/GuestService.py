@@ -93,6 +93,12 @@ class GuestService:
 
         print("Huésped actualizado.")
 
+    def login(self, db):
+        print("=== Inicio de Sesión ===")
+
+        email = input("Ingrese su correo: ").strip()
+        password = input("Ingrese su contraseña: ").strip()
+
 
 
 

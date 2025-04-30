@@ -1,4 +1,4 @@
-
+import mysql.connector
 
 from application.GuestService import GuestService
 from domain.models.Guest import  Guest
@@ -13,8 +13,15 @@ class GuestInput:
 
 
     def register(self, guest , db):
-        id = input("Ingrese su documento de identidad: ").strip()
-        self.guest.id = id
+        while True:
+            try:
+                id = input("Ingrese su documento de identidad: ").strip()
+                if not id.isdigit() or int(id) <= 0 or len(id) > 10:
+                    raise ValueError("❌ ERROR: El ID debe ser un número positivo y máximo 10 dígitos.")
+                self.guest.id = id
+                break
+            except ValueError as e:
+                print(e)
         name = input("Ingrese su nombre: ").strip()
         self.guest.name = name
         last_name = input("Ingrese su apellido: ").strip()
@@ -25,19 +32,29 @@ class GuestInput:
         self.guest.email = email
         password = input("Ingrese su contraseña: ").strip()
         self.guest.password = password
-        print("1. Activo \n2. Inactivo")
-        status = input("Seleccione el estado: ")
+        while True:
+            try:
+                print("1. Activo \n2. Inactivo")
+                status = int(input("Seleccione el estado: ").strip())
+                if status not in [1, 2]:
+                    print("❌ ERROR: Ingrese una de las opciones mostradas.")
+                    continue
+                break
+
+            except ValueError:
+                print("❌ ERROR: Ingrese un número válido.")
         self.guest.status = status
-        print("Selecione su ciudad de origen:")
+
+        print("Seleccione su ciudad de origen:")
         print("1. Medellín\n2. Envigado \n3. Sabaneta\n3. Bello\n4. Itaguí\n5. Rionegro")
         print("6. Bogotá\n7. Barranquilla\n8. Cartagena\n9. Otro")
         while True:
             try:
-                opcion = int(input("Selecione su ciudad de origen: "))
+                opcion = int(input("Seleccione su ciudad de origen: "))
                 if 1 <= opcion <=8:
                     origenes_validos = [
                         "Medellín", "Envigado", "Sabaneta", "Bello", "Itaguí",
-                        "Rionegro", "Bogotá", "Barranquilla", "Cartagena", "Monteria"
+                        "Rionegro", "Bogotá", "Barranquilla", "Cartagena", "Montería"
                     ]
                     origin = origenes_validos[opcion - 1]
                     break
@@ -66,6 +83,11 @@ class GuestInput:
             except ValueError:
                 print("Debe ingresar una ocupación valida")
         self.guest.occupation = occupation
-        self.guest_repository.create_guest_repository(self.guest, db)
-
-
+        try:
+            self.guest_repository.create_guest_repository(self.guest, db)
+            print("✅ Huésped registrado exitosamente.")
+        except mysql.connector.IntegrityError as e:
+            if e.errno == 1062:
+                print(f"❌ ERROR: Ya existe un usuario registrado con ese ID o Correo. No se puede registrar nuevamente.")
+            else:
+                print(f"❌ ERROR inesperado: {e}")

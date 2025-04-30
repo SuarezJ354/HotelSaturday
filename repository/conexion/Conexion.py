@@ -37,13 +37,13 @@ class Conexion:
         try:
             cursor.execute(query, params)
             self.connection.commit()
-            print("Registro se guardo exitosamente")
+            return
             if query.lower().startswith('select'):
                 result =cursor.fetchall()
                 return result
         except mysql.connector.Error as err:
             print("Error al ejecutar la consulta", err)
-            return None
+            raise
         finally:
             cursor.close()
 
