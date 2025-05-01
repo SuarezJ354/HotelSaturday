@@ -1,3 +1,5 @@
+from domain.exceptions.CustomExceptions import InvalidPriceError
+
 class Room:
     def __init__(self, id, room_number, room_type, price, status):
         self._id = id
@@ -35,8 +37,18 @@ class Room:
         return self._price
 
     @price.setter
-    def price(self, value):
-        self._price = value
+    def price(self, price):
+
+        while True:
+            try:
+                price = float(price)
+                if price < 0:
+                    raise InvalidPriceError(price)
+                self._price = price
+                break
+            except InvalidPriceError as e:
+                print(f"Error: {e}")
+                value = input("Ingrese un numero valido")
 
     @property
     def status(self):

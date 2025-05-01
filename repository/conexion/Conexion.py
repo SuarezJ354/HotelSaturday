@@ -32,20 +32,24 @@ class Conexion:
             self.connection.close()
             print("Conexión Cerrada")
 
-    def execute_query(self, query , params= None):
-        cursor = self.connection.cursor(buffered= True)
+    def execute_query(self, query, params=None):
+        cursor = self.connection.cursor(buffered=True)
         try:
             cursor.execute(query, params)
             self.connection.commit()
-            print("Registro se guardo exitosamente")
-            if query.lower().startswith('select'):
-                result =cursor.fetchall()
-                return result
+
+            if query.strip().lower().startswith('select'):
+                result = cursor.fetchall()
+                return result if result else []
+
+            print("✅ Consulta ejecutada exitosamente")
+            return []
         except mysql.connector.Error as err:
-            print("Error al ejecutar la consulta", err)
-            return None
+            print("❌ Error al ejecutar la consulta:", err)
+            raise
         finally:
             cursor.close()
+
 
 
 
