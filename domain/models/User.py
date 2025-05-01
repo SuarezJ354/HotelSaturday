@@ -1,11 +1,5 @@
-import re
-
-from domain.exceptions.CustomExceptions import InvalidEmailError, InvalidPhoneError, InvalidPasswordError, ExceptionsGenerals
-from repository.conexion.Conexion import Conexion
-
 
 class User:
-
     def __init__(self, id, name , last_name,phone, email, password, status):
         self._id = id
         self._name = name
@@ -15,8 +9,6 @@ class User:
         self._password = password
         self._status = status
 
-
-
     @property
     def id(self):
         return self._id
@@ -25,24 +17,13 @@ class User:
     def id(self, id):
         self._id = id
 
-
     @property
     def name(self):
         return self._name
 
-
     @name.setter
     def name(self, name):
-        while True:
-            try:
-                name = name.strip()
-                if not name.isalpha():
-                    raise ValueError("❌ Error: El nombre solo debe contener letras.")
-                self._name = name
-                break
-            except ValueError as e:
-                print(e)
-                name = input("🔄 Ingrese un nombre válido (solo letras): ")
+        self._name = name
 
     @property
     def last_name(self):
@@ -50,17 +31,7 @@ class User:
 
     @last_name.setter
     def last_name(self, last_name):
-        while True:
-            try:
-                last_name = last_name.strip()
-                if not last_name.isalpha():
-                    raise ValueError("❌ Error: El apellido solo debe contener letras.")
-                self._last_name = last_name
-                break
-            except ValueError as e:
-                print(e)
-                last_name = input("Ingrese un apellido válido (solo letras): ")
-
+        self._last_name = last_name
 
     @property
     def phone(self):
@@ -68,16 +39,7 @@ class User:
 
     @phone.setter
     def phone(self, phone):
-        while True:
-            try:
-                if not phone.isdigit() or len(phone) < 7:
-                    raise InvalidPhoneError(phone)
-                self._phone = phone
-                break
-            except InvalidPhoneError as e:
-                print(f"Error al asignar el teléfono: {e}")
-                phone = input("Ingrese un telefono valido: ")
-
+        self._phone = phone
 
     @property
     def email(self):
@@ -85,15 +47,7 @@ class User:
 
     @email.setter
     def email(self, email):
-        while True:
-            try:
-                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-                    raise InvalidEmailError(email)
-                self._email = email
-                break
-            except InvalidEmailError as e:
-                print(f"Error: {e}")
-                email = input(" Ingrese un correo válido: ")
+        self._email = email
 
     @property
     def password(self):
@@ -101,16 +55,7 @@ class User:
 
     @password.setter
     def password(self, password):
-        while True:
-            try:
-                if len(password) < 8:
-                    raise InvalidPasswordError(password)
-                self._password = password
-                break
-            except InvalidPasswordError as e:
-                print(f"Error {e}")
-                password = input("Ingrese una contraseña valida: ")
-
+        self._password = password
 
     @property
     def status(self):
